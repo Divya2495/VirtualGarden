@@ -1,13 +1,23 @@
-/** @type {import('tailwindcss').Config} */
+// tailwind.config.js
+
 module.exports = {
     content: [
       "./app/**/*.{ts,tsx}",
-      "./pages/**/*.{ts,tsx}",
       "./components/**/*.{ts,tsx}",
-      "./node_modules/@shadcn/ui/**/*.{js,ts,jsx,tsx}",
+      "./pages/**/*.{ts,tsx}",
     ],
     theme: {
-      extend: {},
+      extend: {
+        keyframes: {
+          rain: {
+            "0%": { transform: "translateY(-100%)" },
+            "100%": { transform: "translateY(100vh)" },
+          },
+        },
+        animation: {
+          rain: "rain 0.6s linear infinite",
+        },
+      },
     },
     plugins: [],
   };
