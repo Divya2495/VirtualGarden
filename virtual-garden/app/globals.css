@@ -120,20 +120,24 @@
   width: 100vw;
   height: 100vh;
   background-image: url("/images/rain-lines.png");
-  background-size: contain; /* Try contain or 200px auto to test */
+  background-size: contain;
+  /* Try contain or 200px auto to test */
   background-repeat: repeat;
   animation: rainFall 0.4s linear infinite;
-  opacity: 0.7; /* increase visibility */
+  opacity: 0.7;
+  /* increase visibility */
   pointer-events: none;
   z-index: 50;
-  mix-blend-mode: screen; /* Optional: helps visibility */
-  backdrop-filter: none;
+  mix-blend-mode: screen;
+  /* Optional: helps visibility */
+  /* backdrop-filter: none; */
 }
 
 @keyframes rainFall {
   from {
     background-position: 0 0;
   }
+
   to {
     background-position: 0 100%;
   }
@@ -143,7 +147,12 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
-    @apply bg-background text-foreground;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
 }
