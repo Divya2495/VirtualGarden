@@ -5,28 +5,37 @@ import PlantCard from "./PlantCard";
 import PlantModal from "./PlantModal";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { PlantType } from "@/lib/types";
+
+
+type Plant = {
+  type: PlantType;
+  name: string;
+  growthStage: number;
+  lastGrowth?: number;
+};
 
 const GARDEN_SIZE = 16;
 const MAX_STAGE = 3;
 
 export default function GardenGrid() {
-  const [plants, setPlants] = useState(Array(GARDEN_SIZE).fill(null));
+  const [plants, setPlants] = useState<(Plant | null)[]>(Array(GARDEN_SIZE).fill(null));
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [points, setPoints] = useState(0);
   const [isNight, setIsNight] = useState(false);
+
   const [collectedInfo, setCollectedInfo] = useState<{
     index: number;
     points: number;
   } | null>(null);
 
-  const [collectedCounts, setCollectedCounts] = useState({
+  const [collectedCounts, setCollectedCounts] = useState<Record<PlantType, number>>({
     flower: 0,
     veggie: 0,
     tree: 0,
   });
 
-
-  const handlePlant = (plantData: { type: string; name: string }) => {
+  const handlePlant = (plantData: { type: PlantType; name: string }) => {
     if (selectedIndex === null) return;
 
     const newPlants = [...plants];
@@ -39,7 +48,6 @@ export default function GardenGrid() {
     setSelectedIndex(null);
   };
 
-
   const handleRemove = (index: number) => {
     if (!plants[index]) return;
     const newPlants = [...plants];
@@ -51,13 +59,13 @@ export default function GardenGrid() {
     const plant = plants[index];
     if (!plant) return;
 
-    const pointsByType = {
+    const pointsByType: Record<PlantType, number> = {
       flower: 10,
       veggie: 25,
       tree: 50,
     };
 
-    const reward = pointsByType[plant.type] ?? 0;
+    const reward = pointsByType[plant.type];
 
     setCollectedInfo({ index, points: reward });
     setTimeout(() => setCollectedInfo(null), 800);
@@ -69,26 +77,24 @@ export default function GardenGrid() {
 
     setCollectedCounts((prev) => ({
       ...prev,
-      [plant.type]: (prev[plant.type] ?? 0) + 1,
+      [plant.type]: prev[plant.type] + 1,
     }));
   };
 
-
-  // ⏳ Simulate growth every 5 seconds
+  // ⏳ Simulate growth per type
   useEffect(() => {
     const interval = setInterval(() => {
       setPlants((prevPlants) =>
         prevPlants.map((plant) => {
           if (!plant || plant.growthStage >= MAX_STAGE) return plant;
 
-          const delayByType = {
+          const delayByType: Record<PlantType, number> = {
             flower: 5,
             veggie: 7,
             tree: 10,
           };
 
-          const stageTime = delayByType[plant.type] ?? 5;
-
+          const stageTime = delayByType[plant.type];
           const now = Date.now();
           const lastGrowth = plant.lastGrowth || now;
           const elapsedSeconds = (now - lastGrowth) / 1000;
@@ -102,11 +108,10 @@ export default function GardenGrid() {
           };
         })
       );
-    }, 1000); // check every second
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
-
 
   return (
     <main className="fixed inset-0 overflow-hidden">
@@ -120,11 +125,10 @@ export default function GardenGrid() {
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
           <source src="/videos/MorningBackground.mov" type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
       )}
 
-      {/* 🌙 Night image */}
+      {/* 🌙 Night video */}
       {isNight && (
         <video
           autoPlay
@@ -134,19 +138,13 @@ export default function GardenGrid() {
           className="absolute inset-0 w-full h-full object-cover z-0"
         >
           <source src="/videos/NightBackground.mov" type="video/mp4" />
-          Your browser does not support the video tag.
         </video>
       )}
 
-
-      {/* 🌿 Garden UI content */}
+      {/* 🌿 UI */}
       <div className="min-h-screen p-6 relative z-10">
-        {/* your points, buttons, grid, dialog go here */}
         <div className="flex justify-between items-center mb-4 flex-wrap gap-2">
-          <div
-            className={`text-xl font-semibold ${isNight ? "text-green-300" : "text-green-900"
-              }`}
-          >
+          <div className={`text-xl font-semibold ${isNight ? "text-green-300" : "text-green-900"}`}>
             🌟 Points: <span className="font-bold">{points}</span>
             <div className="text-sm mt-1 flex gap-4">
               <span>🌼 Flowers: {collectedCounts.flower}</span>
@@ -154,7 +152,6 @@ export default function GardenGrid() {
               <span>🌳 Trees: {collectedCounts.tree}</span>
             </div>
           </div>
-
           <div className="flex gap-2">
             <Button
               className="bg-green-800 text-white hover:bg-green-900"
@@ -163,7 +160,6 @@ export default function GardenGrid() {
                 setPoints(0);
                 setCollectedCounts({ flower: 0, veggie: 0, tree: 0 });
               }}
-
             >
               🔁 Reset Garden
             </Button>
@@ -199,14 +195,11 @@ export default function GardenGrid() {
                       +{collectedInfo.points}
                     </div>
                   )}
-
                 </div>
-
               </div>
             );
           })}
         </div>
-
 
         <Dialog
           open={selectedIndex !== null}
@@ -216,6 +209,5 @@ export default function GardenGrid() {
         </Dialog>
       </div>
     </main>
-
   );
 }
