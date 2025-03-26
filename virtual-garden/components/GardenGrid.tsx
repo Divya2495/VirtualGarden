@@ -6,7 +6,7 @@ import PlantModal from "./PlantModal";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-const GARDEN_SIZE = 20;
+const GARDEN_SIZE = 16;
 const MAX_STAGE = 3;
 
 export default function GardenGrid() {
@@ -14,7 +14,16 @@ export default function GardenGrid() {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [points, setPoints] = useState(0);
   const [isNight, setIsNight] = useState(false);
-  const [collectedIndex, setCollectedIndex] = useState<number | null>(null);
+  const [collectedInfo, setCollectedInfo] = useState<{
+    index: number;
+    points: number;
+  } | null>(null);
+
+  const [collectedCounts, setCollectedCounts] = useState({
+    flower: 0,
+    veggie: 0,
+    tree: 0,
+  });
 
 
   const handlePlant = (plantData: { type: string; name: string }) => {
@@ -24,10 +33,12 @@ export default function GardenGrid() {
     newPlants[selectedIndex] = {
       ...plantData,
       growthStage: 0,
+      lastGrowth: Date.now(),
     };
     setPlants(newPlants);
     setSelectedIndex(null);
   };
+
 
   const handleRemove = (index: number) => {
     if (!plants[index]) return;
@@ -37,33 +48,65 @@ export default function GardenGrid() {
   };
 
   const handleCollect = (index: number) => {
-    setCollectedIndex(index);
-    setTimeout(() => setCollectedIndex(null), 800); // clear after animation
+    const plant = plants[index];
+    if (!plant) return;
+
+    const pointsByType = {
+      flower: 10,
+      veggie: 25,
+      tree: 50,
+    };
+
+    const reward = pointsByType[plant.type] ?? 0;
+
+    setCollectedInfo({ index, points: reward });
+    setTimeout(() => setCollectedInfo(null), 800);
 
     const newPlants = [...plants];
     newPlants[index] = null;
     setPlants(newPlants);
-    setPoints((prev) => prev + 10);
+    setPoints((prev) => prev + reward);
+
+    setCollectedCounts((prev) => ({
+      ...prev,
+      [plant.type]: (prev[plant.type] ?? 0) + 1,
+    }));
   };
 
 
   // ⏳ Simulate growth every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      const growAmount = 1;
-      setPlants((prev) =>
-        prev.map((plant) => {
-          if (!plant) return null;
-          if (plant.growthStage >= MAX_STAGE) return plant;
+      setPlants((prevPlants) =>
+        prevPlants.map((plant) => {
+          if (!plant || plant.growthStage >= MAX_STAGE) return plant;
+
+          const delayByType = {
+            flower: 5,
+            veggie: 7,
+            tree: 10,
+          };
+
+          const stageTime = delayByType[plant.type] ?? 5;
+
+          const now = Date.now();
+          const lastGrowth = plant.lastGrowth || now;
+          const elapsedSeconds = (now - lastGrowth) / 1000;
+
+          if (elapsedSeconds < stageTime) return plant;
+
           return {
             ...plant,
-            growthStage: Math.min((plant.growthStage || 0) + growAmount, MAX_STAGE),
+            growthStage: plant.growthStage + 1,
+            lastGrowth: now,
           };
         })
       );
-    }, 5000);
+    }, 1000); // check every second
+
     return () => clearInterval(interval);
   }, []);
+
 
   return (
     <main className="fixed inset-0 overflow-hidden">
@@ -105,14 +148,22 @@ export default function GardenGrid() {
               }`}
           >
             🌟 Points: <span className="font-bold">{points}</span>
+            <div className="text-sm mt-1 flex gap-4">
+              <span>🌼 Flowers: {collectedCounts.flower}</span>
+              <span>🥕 Veggies: {collectedCounts.veggie}</span>
+              <span>🌳 Trees: {collectedCounts.tree}</span>
+            </div>
           </div>
+
           <div className="flex gap-2">
             <Button
               className="bg-green-800 text-white hover:bg-green-900"
               onClick={() => {
                 setPlants(Array(GARDEN_SIZE).fill(null));
                 setPoints(0);
+                setCollectedCounts({ flower: 0, veggie: 0, tree: 0 });
               }}
+
             >
               🔁 Reset Garden
             </Button>
@@ -143,11 +194,12 @@ export default function GardenGrid() {
               >
                 <div className="relative">
                   <PlantCard plant={plant} readyToCollect={isReadyToCollect} />
-                  {collectedIndex === index && (
-                    <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-400 font-bold animate-fade-up-out pointer-events-none select-none">
-                      +10
+                  {collectedInfo?.index === index && (
+                    <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-400 font-bold animate-fade-up-out pointer-events-none select-none text-sm">
+                      +{collectedInfo.points}
                     </div>
                   )}
+
                 </div>
 
               </div>

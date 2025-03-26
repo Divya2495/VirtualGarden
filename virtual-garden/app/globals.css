@@ -113,36 +113,6 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-.rain-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-image: url("/images/rain-lines.png");
-  background-size: contain;
-  /* Try contain or 200px auto to test */
-  background-repeat: repeat;
-  animation: rainFall 0.4s linear infinite;
-  opacity: 0.7;
-  /* increase visibility */
-  pointer-events: none;
-  z-index: 50;
-  mix-blend-mode: screen;
-  /* Optional: helps visibility */
-  /* backdrop-filter: none; */
-}
-
-@keyframes rainFall {
-  from {
-    background-position: 0 0;
-  }
-
-  to {
-    background-position: 0 100%;
-  }
-}
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
