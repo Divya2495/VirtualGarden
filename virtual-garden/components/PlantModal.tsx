@@ -15,17 +15,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { useState } from "react";
+import { PlantType } from "@/lib/types"; // ✅ make sure this is exported from your shared types file
 
 type Props = {
-  onPlant: (plant: { type: string; name: string }) => void;
+  onPlant: (plant: { type: PlantType; name: string }) => void;
 };
 
 export default function PlantModal({ onPlant }: Props) {
-  const [type, setType] = useState("flower");
+  const [type, setType] = useState<PlantType>("flower");
   const [name, setName] = useState("");
 
   const handleSubmit = () => {
+    if (!type) return;
     onPlant({ type, name });
     setType("flower");
     setName("");
@@ -38,11 +41,15 @@ export default function PlantModal({ onPlant }: Props) {
       </DialogHeader>
 
       <div className="space-y-4">
+        {/* 🌱 Plant Type Selector */}
         <div>
           <label className="text-sm font-medium text-gray-700 mb-1 block">
             Plant Type
           </label>
-          <Select onValueChange={(value) => setType(value)} defaultValue="flower">
+          <Select
+            onValueChange={(value) => setType(value as PlantType)}
+            defaultValue="flower"
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select type" />
             </SelectTrigger>
@@ -54,6 +61,7 @@ export default function PlantModal({ onPlant }: Props) {
           </Select>
         </div>
 
+        {/* 🏷 Plant Name Input */}
         <div>
           <label className="text-sm font-medium text-gray-700 mb-1 block">
             Plant Name (optional)
