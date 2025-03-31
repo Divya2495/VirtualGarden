@@ -100,21 +100,24 @@ export default function PlantCard({
             </div>
           ) : (
             <div className="text-center">
-              <HoverCard>
-                <HoverCardTrigger asChild>
-                  <span className="text-2xl">{getEmoji()}</span>
-                </HoverCardTrigger>
-                <HoverCardContent className="w-48 text-sm bg-white border shadow rounded-lg z-50">
-                  <div className="font-semibold mb-1">
-                    {plant?.name || "Unnamed Plant"}
-                  </div>
-                  <div>Type: {plant?.type || "Unknown"}</div>
-                  <div>Stage: {plant?.growthStage ?? 0} / 3</div>
-                </HoverCardContent>
-              </HoverCard>
+              <HoverCard openDelay={100} closeDelay={100}>
+  <HoverCardTrigger asChild>
+    <button className="text-2xl cursor-help bg-transparent border-none">
+      {getEmoji()}
+    </button>
+  </HoverCardTrigger>
+  <HoverCardContent className="w-48 text-sm bg-white border shadow rounded-lg z-50">
+    <div className="font-semibold mb-1">
+      {plant?.name || "Unnamed Plant"}
+    </div>
+    <div>Type: {plant?.type || "Unknown"}</div>
+    <div>Stage: {plant?.growthStage ?? 0} / 3</div>
+  </HoverCardContent>
+</HoverCard>
+
 
               {timeLeft && (
-                <p className="text-xs mt-1 text-gray-500">{timeLeft}</p>
+                <p className="text-xs mt-1 text-yellow-300">{timeLeft}</p>
               )}
             </div>
           )

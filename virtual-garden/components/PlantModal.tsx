@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -38,6 +39,9 @@ export default function PlantModal({ onPlant }: Props) {
     <DialogContent>
       <DialogHeader>
         <DialogTitle>Plant a Seed</DialogTitle>
+        <DialogDescription>
+      Choose a Plant and give your plant a name.
+    </DialogDescription>
       </DialogHeader>
 
       <div className="space-y-4">
