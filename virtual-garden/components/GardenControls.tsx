@@ -18,16 +18,17 @@ export default function GardenControls({ isNight, resources, onToggleNight, onRe
                 <Button onClick={onToggleNight}>
                     {isNight ? "☀️ Day" : "🌙 Night"}
                 </Button>
+                
                 {/* <button
-  onClick={onToggleNight}
-  className={`px-4 py-2 rounded-md font-semibold transition ${
-    isNight
-      ? "bg-yellow-600 text-black hover:bg-yellow-700"
-      : "bg-green-800 text-white hover:bg-green-900"
-  }`}
->
-  {isNight ? "☀️ Day" : "🌙 Night"}
-</button> */}
+                    onClick={onToggleNight}
+                    className={`px-4 py-2 rounded-md font-semibold transition ${
+                        isNight
+                        ? "bg-yellow-600 text-black hover:bg-yellow-700"
+                        : "bg-green-800 text-white hover:bg-green-900"
+                    }`}
+                    >
+                    {isNight ? "☀️ Day" : "🌙 Night"}
+                    </button> */}
 
             </div>
             <div className={`${isNight ? "text-green-300" : "text-gray-700"} mt-1 text-right`}>
