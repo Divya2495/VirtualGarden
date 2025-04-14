@@ -148,8 +148,18 @@ export default function GardenGrid() {
   return (
     <main className="fixed inset-0 overflow-hidden">
       <GardenBackground isNight={isNight} />
-
+  
       <div className="min-h-screen p-6 relative z-10">
+        {/* 🌿 Heading at the top */}
+        <h1
+          className={`text-2xl sm:text-3xl font-bold mb-6 text-center w-full ${
+            isNight ? "text-green-300" : "text-green-800"
+          }`}
+        >
+          🌿 My Virtual Garden
+        </h1>
+  
+        {/* Header and controls */}
         <div className="flex justify-between items-start flex-wrap gap-4">
           <GardenHeader
             isNight={isNight}
@@ -164,18 +174,21 @@ export default function GardenGrid() {
             resources={resources}
           />
         </div>
-
+  
+        {/* Garden Grid */}
         <GardenGridArea
           plants={plants}
           collectedInfo={collectedInfo}
           onClick={handlePlantClick}
           onRightClick={handleRemove}
         />
-
+  
+        {/* Plant modal */}
         <Dialog open={selectedIndex !== null} onOpenChange={() => setSelectedIndex(null)}>
           {selectedIndex !== null && <PlantModal onPlant={handlePlant} />}
         </Dialog>
       </div>
     </main>
   );
+  
 }

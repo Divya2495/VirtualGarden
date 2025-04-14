@@ -33,10 +33,10 @@ export default function GardenGridArea({ plants, collectedInfo, onClick, onRight
             <div className="relative">
               <PlantCard plant={plant} readyToCollect={isReadyToCollect} />
               {collectedInfo?.index === index && (
-                <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-400 font-bold animate-fade-up-out pointer-events-none select-none text-sm">
-                  +{collectedInfo.points}
-                </div>
-              )}
+  <div className="absolute top-2 left-1/2 -translate-x-1/2 text-yellow-400 font-bold animate-fade-up-out pointer-events-none select-none text-sm">
+    +{collectedInfo.points} <span className="text-xs text-white">(# {index})</span>
+  </div>
+)}
             </div>
           </div>
         );
